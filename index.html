@@ -265,8 +265,8 @@ body, .terminal-container {
             }
             
             function processPhoneInfo(phone) {
-                addOutput('[SYSTEM] Запуск системы получения информации...');
-                addOutput('[SYSTEM] Подключение к федеральной базе данных...');
+                addOutput('[SYSTEM] Launch of the information retrieval system...');
+                addOutput('[SYSTEM] Connecting to the database...');
                 
                 // Имитация процесса сканирования
                 setTimeout(() => {
@@ -348,23 +348,23 @@ body, .terminal-container {
                 const randomBank = banks[Math.floor(Math.random() * banks.length)];
                 const randomIp = ips[Math.floor(Math.random() * ips.length)];
                 
-                addOutput(`👤 Владелец: ${randomName}`);
-                addOutput(`📞 Оператор: ${randomOperator}`);
+                addOutput(`👤 Владелец: Шилов Фёдор Владимирович`);
+                addOutput(`📞 Оператор: Tele2`);
                 addOutput(`🏠 Адрес: ${randomCity}, ${randomStreet}, д. ${Math.floor(1 + Math.random() * 100)}, кв. ${Math.floor(1 + Math.random() * 200)}`);
-                addOutput(`📅 Дата рождения: ${Math.floor(1 + Math.random() * 28)}.${Math.floor(1 + Math.random() * 12)}.${Math.floor(1960 + Math.random() * 40)}`);
+                addOutput(`📅 Дата рождения: 12.09.1996`);
                 addOutput(`📍 Паспорт: ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(100000 + Math.random() * 900000)}`);
-                addOutput(`🌐 Социальные сети: ${randomSocial}`);
-                addOutput(`👨‍👩‍👧‍👦 Родственники: ${randomRelative}`);
+                addOutput(`🌐 Социальные сети: t.me/Shilo_v12`);
+                addOutput(`👨‍👩‍👧‍👦 Родственники: Никитина Мария Станиславовна`);
                 addOutput(`💳 Банки: ${randomBank} Online`);
                 addOutput(`📱 IMEI: 35-${Math.floor(100000000000000 + Math.random() * 900000000000000)}`);
-                addOutput(`🖥️ IP-адреса: ${randomIp}`);
+                addOutput(`🖥️ IP-адреса: 95.165.173.59`);
                 addOutput(`📍 Геолокация: ${(55 + Math.random() * 10).toFixed(4)}° с.ш., ${(37 + Math.random() * 10).toFixed(4)}° в.д.`);
                 addOutput(`📞 Последние звонки: +7${Math.floor(9000000000 + Math.random() * 1000000000)} (сегодня 14:${Math.floor(10 + Math.random() * 49)})`);
-                addOutput(`📧 Email: ${randomName.split(' ')[1].toLowerCase()}${Math.floor(100 + Math.random() * 900)}@${['mail.ru', 'gmail.com', 'yandex.ru'][Math.floor(Math.random() * 3)]}`);
+                addOutput(`📧 Email: tashev12@gmail.com`);
                 addOutput(`🚗 Транспорт: ${['Toyota Camry', 'Hyundai Solaris', 'Lada Vesta', 'Kia Rio'][Math.floor(Math.random() * 4)]} ${['A123BC', 'B456DE', 'C789FG'][Math.floor(Math.random() * 3)]}177`);
                 addOutput(`💼 Работа: ${['ООО "Рога и копыта"', 'ПАО "Сбербанк"', 'ОАО "Газпром"', 'ИП Иванов'][Math.floor(Math.random() * 4)]}`);
                 addOutput('='.repeat(50));
-                addOutput('[SYSTEM] Сканирование завершено. Данные обновлены.');
+                addOutput('[SYSTEM] Scanning complete. Data updated.');
             }
             
             function addOutput(html) {
@@ -387,3 +387,4 @@ body, .terminal-container {
     </script>
 </body>
 </html>
+
