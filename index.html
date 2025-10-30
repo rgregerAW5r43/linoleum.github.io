@@ -1,26 +1,316 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Linoleum Hack Panel</title>
-  <style>
-    body { font-family: monospace; background: #1e1e1e; color: #00ff99; text-align: center; }
-    button { background: #00ff99; color: #000; border: none; padding: 10px 20px; margin-top: 20px; border-radius: 8px; font-weight: bold; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto Mono', monospace;
+        }
+        
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            line-height: 1.4;
+            padding: 0;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+        
+        .terminal-container {
+            width: 100%;
+            height: 100vh;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: #000000;
+        }
+        
+        .terminal-output {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .input-line {
+            display: flex;
+            align-items: center;
+            margin-top: 5px;
+        }
+        
+        .prompt {
+            color: #ffffff;
+            margin-right: 8px;
+        }
+        
+        input {
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            outline: none;
+            flex: 1;
+            font-size: 16px;
+            caret-color: #ffffff;
+        }
+        
+        .command {
+            color: #ffffff;
+        }
+        
+        .output {
+            margin-bottom: 10px;
+        }
+        
+        .scanning {
+            color: #ffffff;
+        }
+        
+        .success {
+            color: #ffffff;
+        }
+        
+        .error {
+            color: #ffffff;
+        }
+        
+        .info {
+            color: #ffffff;
+        }
+        
+        .blink {
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        
+        /* Адаптивность для мобильных устройств */
+        @media (max-width: 600px) {
+            .terminal-container {
+                padding: 10px;
+            }
+            
+            input {
+                font-size: 16px;
+            }
+        }
+        
+        /* Стиль полосы прокрутки как в Termux */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #333333;
+            border-radius: 2px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555555;
+        }
+    </style>
 </head>
 <body>
-  <h2>💾 Linoleum Hack Console</h2>
-  <p>Welcome, operator.</p>
-  <button onclick="sendMessage()">Execute Linoleum Protocol</button>
+    <div class="terminal-container" id="terminal">
+        <div class="terminal-output">
+            <div class="output">Welcome to Termux!</div>
+            <div class="output"></div>
+            <div class="output">Community forum: https://termux.com/community</div>
+            <div class="output">Gitter chat:     https://gitter.im/termux/termux</div>
+            <div class="output">IRC channel:     #termux on libera.chat</div>
+            <div class="output"></div>
+            <div class="output">Working with packages:</div>
+            <div class="output"> * Search packages:   pkg search &lt;query&gt;</div>
+            <div class="output"> * Install a package: pkg install &lt;package&gt;</div>
+            <div class="output"> * Upgrade packages:  pkg upgrade</div>
+            <div class="output"></div>
+            <div class="output">Subscribing to additional repositories:</div>
+            <div class="output"> * Root:     pkg install root-repo</div>
+            <div class="output"> * Unstable: pkg install unstable-repo</div>
+            <div class="output"> * X11:      pkg install x11-repo</div>
+            <div class="output"></div>
+            <div class="output">Report issues at https://termux.com/issues</div>
+            <div class="output"></div>
+            <div class="output" id="custom-command-info">[INFO] Для получения информации по номеру телефона введите: phoneinfo &lt;номер&gt;</div>
+            <div class="output"></div>
+        </div>
+        
+        <div class="input-line">
+            <span class="prompt">$</span>
+            <input type="text" id="command-input" autofocus autocomplete="off">
+        </div>
+    </div>
 
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script>
-    const tg = window.Telegram.WebApp;
-    tg.expand(); // разворачивает на весь экран
-
-    function sendMessage() {
-      tg.sendData(JSON.stringify({ action: "execute", target: "laminate" }));
-    }
-  </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const terminal = document.getElementById('terminal');
+            const commandInput = document.getElementById('command-input');
+            const customCommandInfo = document.getElementById('custom-command-info');
+            
+            // Фокус на поле ввода при клике в любом месте терминала
+            terminal.addEventListener('click', function() {
+                commandInput.focus();
+            });
+            
+            commandInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const command = commandInput.value.trim();
+                    
+                    if (command) {
+                        processCommand(command);
+                        commandInput.value = '';
+                    }
+                }
+            });
+            
+            function processCommand(command) {
+                // Добавляем ввод пользователя в терминал
+                addOutput(`<div class="input-line"><span class="prompt">$</span> <span class="command">${command}</span></div>`);
+                
+                // Обработка команды phoneinfo
+                if (command.startsWith('phoneinfo ')) {
+                    const phoneNumber = command.substring(10).trim();
+                    processPhoneInfo(phoneNumber);
+                } 
+                // Обработка других команд для реалистичности
+                else if (command === 'pkg update') {
+                    addOutput('Get:1 https://termux.org/packages stable InRelease');
+                    addOutput('Get:2 https://termux.org/packages stable/main all Packages');
+                    addOutput('Get:3 https://termux.org/packages stable/main aarch64 Packages');
+                    addOutput('Fetched 834 kB in 3s (256 kB/s)');
+                    addOutput('Reading package lists... Done');
+                }
+                else if (command === 'pkg upgrade') {
+                    addOutput('Reading package lists... Done');
+                    addOutput('Building dependency tree... Done');
+                    addOutput('Reading state information... Done');
+                    addOutput('Calculating upgrade... Done');
+                    addOutput('0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.');
+                }
+                else if (command === 'ls') {
+                    addOutput('storage  bin  lib  usr  tmp  var');
+                }
+                else if (command === 'pwd') {
+                    addOutput('/data/data/com.termux/files/home');
+                }
+                else if (command === 'whoami') {
+                    addOutput('u0_a257');
+                }
+                else if (command === 'help') {
+                    addOutput('Available commands:');
+                    addOutput('  phoneinfo <number> - получить информацию по номеру телефона');
+                    addOutput('  pkg update - обновить списки пакетов');
+                    addOutput('  pkg upgrade - обновить установленные пакеты');
+                    addOutput('  ls - показать содержимое текущей директории');
+                    addOutput('  pwd - показать текущую директорию');
+                    addOutput('  whoami - показать текущего пользователя');
+                    addOutput('  clear - очистить терминал');
+                    addOutput('  help - показать эту справку');
+                }
+                else if (command === 'clear') {
+                    clearTerminal();
+                }
+                else {
+                    addOutput(`bash: ${command}: command not found`);
+                    addOutput('Install package \'bash\' to provide command \'bash\'? [y/N]');
+                }
+            }
+            
+            function processPhoneInfo(phone) {
+                // Проверка формата номера
+                if (!phone.match(/^(\+7|8)\d{10}$/)) {
+                    addOutput('Ошибка: Неверный формат номера. Используйте +7XXXXXXXXXX или 8XXXXXXXXXX');
+                    return;
+                }
+                
+                addOutput('Запуск системы получения информации...');
+                
+                // Имитация процесса сканирования
+                setTimeout(() => {
+                    addOutput('[1/5] Подключение к базе данных оператора...');
+                }, 500);
+                
+                setTimeout(() => {
+                    addOutput('[2/5] Получение информации о владельце...');
+                }, 1000);
+                
+                setTimeout(() => {
+                    addOutput('[3/5] Поиск в социальных сетях...');
+                }, 1500);
+                
+                setTimeout(() => {
+                    addOutput('[4/5] Анализ геолокационных данных...');
+                }, 2000);
+                
+                setTimeout(() => {
+                    addOutput('[5/5] Поиск финансовой информации...');
+                }, 2500);
+                
+                // Вывод результатов
+                setTimeout(() => {
+                    showPhoneResults(phone);
+                }, 3000);
+            }
+            
+            function showPhoneResults(phone) {
+                addOutput('========================================');
+                addOutput('ИНФОРМАЦИЯ ПО НОМЕРУ: ' + phone);
+                addOutput('========================================');
+                
+                // Генерация случайных данных для реалистичности
+                const names = ['Иванов Иван Иванович', 'Петров Петр Петрович', 'Сидоров Алексей Владимирович', 'Кузнецова Мария Сергеевна'];
+                const addresses = ['г. Москва, ул. Ленина, д. 15, кв. 42', 'г. Санкт-Петербург, Невский пр., д. 25', 'г. Екатеринбург, ул. Мира, д. 7, кв. 13'];
+                const operators = ['МТС', 'Билайн', 'МегаФон', 'Теле2'];
+                const socials = ['vk.com/id123456', 'instagram.com/user_name', 'facebook.com/profile.name'];
+                const relatives = ['Иванова Анна Петровна (мать)', 'Иванов Петр Сергеевич (отец)', 'Иванова Ольга Ивановна (сестра)'];
+                const banks = ['Сбербанк', 'Тинькофф', 'Альфа-Банк', 'ВТБ'];
+                
+                const randomName = names[Math.floor(Math.random() * names.length)];
+                const randomAddress = addresses[Math.floor(Math.random() * addresses.length)];
+                const randomOperator = operators[Math.floor(Math.random() * operators.length)];
+                const randomSocial = socials[Math.floor(Math.random() * socials.length)];
+                const randomRelative = relatives[Math.floor(Math.random() * relatives.length)];
+                const randomBank = banks[Math.floor(Math.random() * banks.length)];
+                
+                addOutput('Владелец: ' + randomName);
+                addOutput('Оператор: ' + randomOperator);
+                addOutput('Адрес регистрации: ' + randomAddress);
+                addOutput('Социальные сети: ' + randomSocial);
+                addOutput('Ближайшие родственники: ' + randomRelative);
+                addOutput('Банковские приложения: ' + randomBank + ' Online');
+                addOutput('Последние звонки: +7' + Math.floor(1000000000 + Math.random() * 9000000000) + ' (5 мин назад)');
+                addOutput('Геолокация: 55.7558° с.ш., 37.6173° в.д. (обновлено 15 мин назад)');
+                addOutput('IMEI: 35-' + Math.floor(100000000000000 + Math.random() * 900000000000000));
+                addOutput('========================================');
+                addOutput('Сканирование завершено.');
+            }
+            
+            function addOutput(html) {
+                const outputDiv = document.createElement('div');
+                outputDiv.className = 'output';
+                outputDiv.innerHTML = html;
+                terminal.insertBefore(outputDiv, terminal.lastElementChild);
+                terminal.scrollTop = terminal.scrollHeight;
+            }
+            
+            function clearTerminal() {
+                const outputs = document.querySelectorAll('.output');
+                outputs.forEach(output => {
+                    if (output.id !== 'custom-command-info') {
+                        output.remove();
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
