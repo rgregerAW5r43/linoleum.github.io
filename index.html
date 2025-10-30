@@ -61,6 +61,23 @@
         font-size: 13px !important;
     }
 }
+
+/* Фикс наложения текста в Telegram Mini App */
+.output {
+    line-height: normal !important;  /* Автоматическая высота строк */
+    height: auto !important;         /* Снимаем ограничение высоты */
+    display: block !important;       /* Чтобы каждая строка была отдельным блоком */
+    align-items: flex-start !important; /* Отменяем выравнивание по центру */
+    padding: 1px 0 !important;       /* Чуть увеличиваем отступы между строками */
+}
+
+.input-line {
+    align-items: flex-start !important;
+}
+
+body, .terminal-container {
+    -webkit-text-size-adjust: none !important; /* Отключаем авто-масштаб Telegram */
+}
         input {
             background: transparent;
             border: none;
