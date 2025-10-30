@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Linoleum Hack Panel</title>
+  <style>
+    body { font-family: monospace; background: #1e1e1e; color: #00ff99; text-align: center; }
+    button { background: #00ff99; color: #000; border: none; padding: 10px 20px; margin-top: 20px; border-radius: 8px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>💾 Linoleum Hack Console</h2>
+  <p>Welcome, operator.</p>
+  <button onclick="sendMessage()">Execute Linoleum Protocol</button>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand(); // разворачивает на весь экран
+
+    function sendMessage() {
+      tg.sendData(JSON.stringify({ action: "execute", target: "laminate" }));
+    }
+  </script>
+</body>
+</html>
